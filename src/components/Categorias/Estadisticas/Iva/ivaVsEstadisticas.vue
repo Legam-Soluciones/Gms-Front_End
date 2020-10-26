@@ -1,0 +1,45 @@
+<template>
+  <v-card
+    class="mx-auto text-center"
+    color="deep-orange darken-2"
+    dark
+    max-width="425"
+  >
+    <v-card-text>
+      <v-sheet color="deep-orange lighten-2">
+        <v-sparkline
+          :value="value"
+          color="#FAFAFA"
+          height="100"
+          padding="24"
+          stroke-linecap="round"
+          smooth
+        >
+          <template v-slot:label="item"> ${{ item.value }} </template>
+        </v-sparkline>
+      </v-sheet>
+    </v-card-text>
+
+    <v-card-text>
+      <div class="display-1 font-weight-thin">
+        IVA ventas VS IVA compras
+      </div>
+    </v-card-text>
+
+    <v-divider></v-divider>
+
+    <v-card-actions class="justify-center">
+      <v-btn block text>
+        Estadisticas
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    value: [100, 250, 675, 75, 590, 610, 760]
+  })
+};
+</script>
