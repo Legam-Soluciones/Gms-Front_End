@@ -1,5 +1,7 @@
+// En el router se deciden las direcciones a las que llevaran los links
+// Es importante recordar que los archivos del router están en la carpeta Views y NO en Components
 import Vue from "vue";
-import Router from "vue-router";
+import VueRouter from "vue-router";
 import Home from "./views/Home.vue";
 import Agenda from "./views/agenda.vue";
 import HelloWorld from "./components/HelloWorld.vue";
@@ -7,18 +9,16 @@ import documentos from "./views/documentos.vue";
 import expedientes from "./views/expedientes.vue";
 import tareas from "./views/tareas.vue";
 import estadisticas from "./views/estadisticas.vue";
-import finanzas from "./views/Finanzas/finanzas.vue";
-import prefactura from "./views/Finanzas/prefactura.vue";
-import factura from "./views/Finanzas/factura.vue";
-import clientes from "./views/Finanzas/clientes.vue";
-import recepcion from "./views/Finanzas/recepcion.vue";
-import presupuesto from "./views/Finanzas/presupuesto.vue";
-import facturacompra from "./views/Finanzas/facturacompra.vue";
-import proveedores from "./views/Finanzas/proveedores.vue";
+import finanzas from "./views/Finanzas.vue";
+import Inicio from "./views/Inicio.vue";
+import Login from "./views/Auth/Login.vue";
+import Register from "./views/Auth/Register.vue";
+import Dashboard from "./views/Dashboard.vue";
+import firebase from "firebase";
 
-Vue.use(Router);
+Vue.use(VueRouter);
 
-export default new Router({
+const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes: [
@@ -26,77 +26,112 @@ export default new Router({
       path: "/",
       name: "home",
       component: Home
+      // meta: {
+      //   requiredAuth: true
+      // }
+    },
+    {
+      path: "/Inicio",
+      name: "Inicio",
+      component: Inicio
+      // meta: {
+      //   requiredAuth: true
+      // }
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: Login
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: Register
+      // meta: {
+      //   requiredAuth: true
+      // }
+    },
+    {
+      path: "/dashboard",
+      name: "dashboard",
+      component: Dashboard
+      //  meta: {
+      // requiredAuth: true
+      // }
     },
 
     {
       path: "/Agenda",
       name: "Agenda",
       component: Agenda
+      // meta: {
+      //   requiredAuth: true
+      // }
     },
     {
       path: "/HelloWorld",
       name: "HelloWorld",
       component: HelloWorld
+      // meta: {
+      //   requiredAuth: true
+      // }
     },
     {
       path: "/documentos",
       name: "documentos",
       component: documentos
+      // meta: {
+      //   requiredAuth: true
+      // }
     },
     {
       path: "/expedientes",
       name: "expedientes",
       component: expedientes
+      // meta: {
+      //   requiredAuth: true
+      // }
     },
     {
       path: "/tareas",
       name: "tareas",
       component: tareas
+      // meta: {
+      //   requiredAuth: true
+      // }
     },
     {
       path: "/estadisticas",
       name: "estadisticas",
       component: estadisticas
+      // meta: {
+      //   requiredAuth: true
+      // }
     },
     {
       path: "/finanzas",
       name: "finanzas",
       component: finanzas
-    },
-    {
-      path: "/prefactura",
-      name: "prefactura",
-      component: prefactura
-    },
-    {
-      path: "/factura",
-      name: "factura",
-      component: factura
-    },
-    {
-      path: "/clientes",
-      name: "clientes",
-      component: clientes
-    },
-    {
-      path: "/recepcion",
-      name: "recepcion",
-      component: recepcion
-    },
-    {
-      path: "/presupuesto",
-      name: "presupuesto",
-      component: presupuesto
-    },
-    {
-      path: "/facturacompra",
-      name: "facturacompra",
-      component: facturacompra
-    },
-    {
-      path: "/proveedores",
-      name: "proveedores",
-      component: proveedores
+      // meta: {
+      //   requiredAuth: true
+      // }
     }
   ]
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(ruta => ruta.meta.requiredAuth)) {
+    const user = firebase.auth().currentUser;
+    if (user) {
+      next();
+    } else {
+      next({
+        name: "login"
+      });
+    }
+  } else {
+    next();
+  }
+});
+
+export default router;

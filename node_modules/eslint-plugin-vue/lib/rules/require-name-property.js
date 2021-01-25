@@ -6,10 +6,16 @@
 
 const utils = require('../utils')
 
-function isNameProperty (node) {
-  return node.type === 'Property' &&
-    node.key.name === 'name' &&
+/**
+ * @param {Property | SpreadElement} node
+ * @returns {node is ObjectExpressionProperty}
+ */
+function isNameProperty(node) {
+  return (
+    node.type === 'Property' &&
+    utils.getStaticPropertyName(node) === 'name' &&
     !node.computed
+  )
 }
 
 module.exports = {
@@ -17,15 +23,15 @@ module.exports = {
     type: 'suggestion',
     docs: {
       description: 'require a name property in Vue components',
-      category: undefined,
+      categories: undefined,
       url: 'https://eslint.vuejs.org/rules/require-name-property.html'
     },
     fixable: null,
     schema: []
   },
-
-  create (context) {
-    return utils.executeOnVue(context, component => {
+  /** @param {RuleContext} context */
+  create(context) {
+    return utils.executeOnVue(context, (component) => {
       if (component.properties.some(isNameProperty)) return
 
       context.report({

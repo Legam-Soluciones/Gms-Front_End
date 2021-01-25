@@ -1,3 +1,4 @@
+<!-- Esta es la "plantilla" que se repite siempre en todos los componentes -->
 <template>
   <v-app id="inspire">
     <v-navigation-drawer
@@ -28,7 +29,7 @@
                   class="ma-1 white--text"
                   text
                   color="primary"
-                  @click="login()"
+                  @click="Agenda()"
                 >
                   <v-icon> date_range </v-icon> Agenda</v-btn
                 >
@@ -72,17 +73,12 @@
                 </v-btn>
               </div>
               <div class="my-2">
-                <v-btn class="ma-1 white--text" text color="primary"
-                  ><v-icon> confirmation_number </v-icon> Citas Externas
-                </v-btn>
-              </div>
-              <div class="my-2">
                 <v-btn
                   class="ma-1 white--text"
                   text
                   color="primary"
                   href="https://web.whatsapp.com/"
-                  ><v-icon> sms </v-icon> Mensajes SMS
+                  ><v-icon> sms </v-icon> Mensajes
                 </v-btn>
               </div>
               <div class="my-2">
@@ -104,6 +100,53 @@
         </template>
       </v-list>
     </v-navigation-drawer>
+    <nav>
+      <v-navigation-drawer
+        v-model="drawer2"
+        dark
+        app
+        class="accent-2"
+        color="#007096"
+        fixed
+        right
+      >
+        <v-layout column>
+          <v-flex class="mt-5">
+            <div class="d-flex justify-center">
+              <v-avatar size="100">
+                <img src="@/assets/logo.png" alt="" />
+              </v-avatar>
+            </div>
+          </v-flex>
+        </v-layout>
+        <p class="white--text subheading m-1 text-center">
+          Más Salud Slim Clinic
+        </p>
+        <v-list rounded dense>
+          <v-list-item router to="/login">
+            <v-list-item-action>
+              1
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>
+                Mi Cuenta
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item router to="/">
+            <v-list-item-action>
+              2
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title @click="logout">
+                Salir
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+    </nav>
 
     <v-app-bar
       :clipped-left="$vuetify.breakpoint.lgAndUp"
@@ -115,18 +158,8 @@
       <v-toolbar-title style="width: 300px" class="ml-0 pl-4">
         <span class="hidden-sm-and-down"> </span>
       </v-toolbar-title>
-      <v-text-field
-        flat
-        solo-inverted
-        hide-details
-        prepend-inner-icon="mdi-magnify"
-        label="Search"
-        class="hidden-sm-and-down"
-      ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon>apps</v-icon>
-      </v-btn>
+      <v-icon @click.stop="drawer2 = !drawer2">apps</v-icon>
     </v-app-bar>
     <v-main>
       <v-container class="fill-height" fluid>
@@ -162,12 +195,17 @@
 </template>
 
 <script>
+import firebase from "firebase";
 export default {
   data: () => ({
-    drawer: null
+    drawer: false,
+    drawer2: false,
+    isOpen: false,
+    user: null
   }),
   methods: {
-    login() {
+    // Cada uno de estos documentos lleva a su sección correspondiente.
+    Agenda() {
       this.$router.push({ name: "Agenda" });
     },
     Inicio() {
@@ -187,7 +225,28 @@ export default {
     },
     finanzas() {
       this.$router.push({ name: "finanzas" });
+    },
+    toggleMenu() {
+      const status = !this.isOpen;
+      this.isOpen = status;
+    },
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$router.push({ name: "login" });
+        });
     }
+  },
+  created() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.user = user;
+      } else {
+        this.user = null;
+      }
+    });
   }
 };
 </script>

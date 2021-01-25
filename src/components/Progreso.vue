@@ -1,3 +1,4 @@
+<!-- Este componennte lo hizo un antiguo programador. La idea es mostrar las citas en un gráfico, pero por el momento solo tiene data falso. -->
 <template>
   <div class="text-center">
     <h4>Citas Hoy</h4>

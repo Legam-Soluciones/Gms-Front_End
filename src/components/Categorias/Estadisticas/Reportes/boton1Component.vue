@@ -1,3 +1,6 @@
+<!-- Estos botones de reportes no fueron hechos por mí. Creo que pueden ser cambiados y ser usados de una manera más inteligente. 
+Recomiendo preguntarle a los jefes si esta parte es estrictamente necesaria ya que puede que se esté programando algo que no se vaya a usar nunca.
+-->
 <template>
   <v-row justify="center">
     <v-dialog

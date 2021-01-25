@@ -39,7 +39,7 @@
             v-model="IDTipoIdentificacion"
           ></v-select>
           <v-text-field
-            v-model="NumeroIdentificacion"
+            v-model.number="NumeroIdentificacion"
             type="number"
             label="Identificación"
           ></v-text-field>
@@ -53,11 +53,11 @@
             type="date"
             label="Fecha de nacimiento"
           ></v-text-field>
-          <v-text-field
+          <v-select
+            :items="['18-24', '25-34', '35-44', '45-54', '55-64', '65+']"
             v-model="Edad"
-            type="number"
             label="Edad"
-          ></v-text-field>
+          ></v-select>
           <v-text-field
             v-model="Telefono1CodigoPais"
             type="number"
@@ -83,7 +83,10 @@
             type="text"
             label="Correo Electrónico"
           ></v-text-field>
-          <v-btn color="primay" class="mr-4" @click="addExpediente"
+          <v-btn
+            color="primay"
+            class="mr-4"
+            @click="addExpediente(), addEdad(), addGenero()"
             >Crear Expediente</v-btn
           >
         </v-form>
@@ -93,6 +96,8 @@
 </template>
 <script>
 import { db } from "@/main";
+import { increment } from "@/main.js";
+import { statsRef } from "@/main.js";
 export default {
   data() {
     return {
@@ -100,7 +105,7 @@ export default {
       SegundoNombre: null,
       PrimerApellido: null,
       SegundoApellido: null,
-      IDTipoIdentificacion: null,
+      IDTipoIdentificacion: 0,
       NumeroIdentificacion: null,
       Genero: null,
       FechaNacimiento: null,
@@ -116,6 +121,50 @@ export default {
     };
   },
   methods: {
+    addEdad() {
+      const batch = db.batch();
+      if (this.Edad == "18-24") {
+        batch.set(statsRef, { TotalExpedientes: increment }, { merge: true });
+        batch.set(statsRef, { Edades: { Edad1: increment } }, { merge: true });
+        batch.commit();
+      }
+      if (this.Edad == "25-34") {
+        batch.set(statsRef, { TotalExpedientes: increment }, { merge: true });
+        batch.set(statsRef, { Edades: { Edad2: increment } }, { merge: true });
+        batch.commit();
+      }
+      if (this.Edad == "35-44") {
+        batch.set(statsRef, { TotalExpedientes: increment }, { merge: true });
+        batch.set(statsRef, { Edades: { Edad3: increment } }, { merge: true });
+        batch.commit();
+      }
+      if (this.Edad == "45-54") {
+        batch.set(statsRef, { TotalExpedientes: increment }, { merge: true });
+        batch.set(statsRef, { Edades: { Edad4: increment } }, { merge: true });
+        batch.commit();
+      }
+      if (this.Edad == "55-64") {
+        batch.set(statsRef, { TotalExpedientes: increment }, { merge: true });
+        batch.set(statsRef, { Edades: { Edad5: increment } }, { merge: true });
+        batch.commit();
+      }
+      if (this.Edad == "65+") {
+        batch.set(statsRef, { TotalExpedientes: increment }, { merge: true });
+        batch.set(statsRef, { Edades: { Edad6: increment } }, { merge: true });
+        batch.commit();
+      }
+    },
+    addGenero() {
+      const batch = db.batch();
+      if (this.Genero == "Masculino") {
+        batch.set(statsRef, { hombres: increment }, { merge: true });
+        batch.commit();
+      }
+      if (this.Genero == "Femenino") {
+        batch.set(statsRef, { mujeres: increment }, { merge: true });
+        batch.commit();
+      }
+    },
     async addExpediente() {
       try {
         await db.collection("Expedientes1").add({
@@ -138,6 +187,9 @@ export default {
         });
       } catch (error) {
         console.log(error);
+        alert(
+          "No se pudo añadir el expediente. Por favor intentarlo de nuevo."
+        );
       }
     }
   }
